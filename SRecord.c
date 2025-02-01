@@ -2,7 +2,6 @@
 
 void writeSRecord(FILE *outFile, unsigned char *buffer, size_t length) {
     
-    unsigned char checksum = 0;
     size_t address = 0; // this would be a placeholder for the address
     size_t index = 0; // this is the index which will help me to make the checksum later
 
@@ -20,21 +19,23 @@ void writeSRecord(FILE *outFile, unsigned char *buffer, size_t length) {
                                                                       // S1 has 2 digit hexadecimal(including total number of bytes including address and checksum)this would be the (%02X)
                                                                       // and the addres that would be the 4 digit hexadecimal number (%04X)
 
-        for (size_t i = 0; i < chunckSize; i++) { // this is a pretty simple for loop
-            unsigned char dataByte = buffer[index + i]; // this line accesses a specific byte from the buffer and uses index + i to get the current bytes position
-            fprintf(outFile, "%02X", dataByte);// Im using this so I can write the value of dataByte to the output file (outFile) in an hexadecimal format
+        unsigned char checksum = countField;  // Here I moved the initialization of the Checksum
+        checksum += (address >> 8) & 0xFF;    // here is were I added the high byte of the address
+        checksum += address & 0xFF;           // And here is where I add the low byte of the address
 
-            //and here I will apply an algorithm that I found on this website https://www.ibm.com/docs/en/zos/2.4.0?topic=calculations-checksum-algorithm 
-            if (i % 2 == 0) {
-                P1 += dataByte;
-                P1 &= 0xFF;
-            }
-            else {
-                P2 += dataByte;
-                P2 &= 0xFF;
-            }
-            
+        for (size_t i = 0; i < chunkSize; i++) {
+            unsigned char dataByte = buffer[index + i]; // In this line what I do is that in each extracted byte (dataByte) is then written to the output file and added to the checksum
+            fprintf(outFile, "%02X", dataByte); // this line writes data in hex format
+
+            checksum += dataByte;  // This line adds to checksum
         }
+
+        // 1's complement (this means flipping all the bytes)
+        checksum = ~checksum & 0xFF;
+
+        // IT writes the checksum to the file
+        fprintf(outFile, "%02X\n", checksum);
+
 
         fprintf(outFile, "%02X%02X\n", P1, P2);// what this line does is that first it writes formatted output to the outFile file pointer, then it writes the values of P1 and P2
                                                // how the %02X works is really simple the 0 is so if the number is less than 2 digits then the first number is 0 the 2 is so it reserves 
