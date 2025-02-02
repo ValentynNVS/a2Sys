@@ -36,11 +36,11 @@ void writeSRecord(FILE *outFile, unsigned char *buffer, size_t length) {
                                                                       // S1 has 2 digit hexadecimal(including total number of bytes including address and checksum)this would be the (%02X)
                                                                       // and the addres that would be the 4 digit hexadecimal number (%04X)
 
-        unsigned char checksum = countField;  // Here I moved the initialization of the Checksum
+        unsigned char checksum = count;  // Here I moved the initialization of the Checksum
         checksum += (address >> 8) & 0xFF;    // here is were I added the high byte of the address
         checksum += address & 0xFF;           // And here is where I add the low byte of the address
 
-        for (size_t i = 0; i < chunkSize; i++) {
+        for (size_t i = 0; i < chunckSize; i++) {
             unsigned char dataByte = buffer[index + i]; // In this line what I do is that in each extracted byte (dataByte) is then written to the output file and added to the checksum
             fprintf(outFile, "%02X", dataByte); // this line writes data in hex format
 
