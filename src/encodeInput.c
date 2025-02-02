@@ -9,7 +9,7 @@
 */
 
 
-#include "encodeInput.h"
+#include "../inc/encodeInput.h"
 
 int main(int argc, char* argv[]) {
     // gotta make sure the user actually enters something useful

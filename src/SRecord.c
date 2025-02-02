@@ -7,7 +7,7 @@
 *      This is the file where all the functionality for SRecord files is implemented.
 */
 
-#include "encodeInput.h"
+#include "../inc/encodeInput.h"
 
 /*
  *  Function  : writeSRecord()
