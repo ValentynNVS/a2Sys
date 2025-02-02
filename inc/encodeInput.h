@@ -25,7 +25,12 @@ void printUsage();
 void processFile(FILE *inFile, FILE *outFile, const char *format);  
 
 
-void writeSRecord(FILE *outFile, unsigned char *buffer, size_t length);
+void writeSRecord(FILE* outFile, unsigned char* buffer, size_t length, size_t address);
+
 void writeAssembly(FILE *outFile, unsigned char *buffer, size_t length);
+
+void writeS0Record(FILE* outFile, const char* name);
+void writeS5Record(FILE* outFile, int s1Count);
+void writeS9Record(FILE* outFile);
 
 #endif // ENCODEINPUT_H

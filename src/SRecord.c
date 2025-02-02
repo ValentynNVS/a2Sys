@@ -13,56 +13,77 @@
  *  Function  : writeSRecord()
  *  Summary   : This function writes an S-Record formatted line from binary input file.
  *  Params    :
- *     FILE *outFile, unsigned char *buffer, size_t length
+ *     FILE* outFile, unsigned char* buffer, size_t length, size_t address
  *  Return    :
  *     none.
  */
-void writeSRecord(FILE *outFile, unsigned char *buffer, size_t length) {
-    
-    size_t address = 0; // this would be a placeholder for the address
-    size_t index = 0; // this is the index which will help me to make the checksum later
+void writeSRecord(FILE* outFile, unsigned char* buffer, size_t length, size_t address) {
+
+    size_t index = 0;
 
     while (index < length) {
-        size_t chunckSize = (length - index >= 16) ? 16 : (length - index); // this line what does isthat it determines the number of bytes (the chunkSize) to be written in the S-Record,
-                                                                            // the maximum here is 16 because we are using maximum S1 that would be 16 bytes, If its more than 16 or equal
-        unsigned char count = chunckSize + 3; // This counts the address (2 bytes) + Data + Checksum (1 byte) [it is +3 because of the addition of what we already know
-                                              // the number of bytes for the address and the checksum]
-        unsigned char P1 = 0x00;// Here i initialize two variables that will help me to calculate teh checksum for the S-Record
-                                // P1 stores the cumulative checksum of the odd-indexed data bytes
-        unsigned char P2 = 0x00;// and P2 stores the cumulative checksum of the even-indexed data bytes
+        size_t chunkSize = (length - index >= 16) ? 16 : (length - index); // Max 16 bytes per S1 record
+        unsigned char count = chunkSize + 3; // Count includes address (2 bytes) and checksum (1 byte)
+        fprintf(outFile, "S1%02X%04X", count, (unsigned int)address); // Write S1 record header
 
-        fprintf(outFile, "S1%02X%04X", count, (unsigned int)address); // what this line does is that it uses a format("S1%02X%04X") 
-                                                                      // and writes a part of the S-Record to the output file
-                                                                      // S1 has 2 digit hexadecimal(including total number of bytes including address and checksum)this would be the (%02X)
-                                                                      // and the addres that would be the 4 digit hexadecimal number (%04X)
-
-        unsigned char checksum = count;  // Here I moved the initialization of the Checksum
-        checksum += (address >> 8) & 0xFF;    // here is were I added the high byte of the address
-        checksum += address & 0xFF;           // And here is where I add the low byte of the address
-
-        for (size_t i = 0; i < chunckSize; i++) {
-            unsigned char dataByte = buffer[index + i]; // In this line what I do is that in each extracted byte (dataByte) is then written to the output file and added to the checksum
-            fprintf(outFile, "%02X", dataByte); // this line writes data in hex format
-
-            checksum += dataByte;  // This line adds to checksum
+        unsigned char checksum = count + (address >> 8) + (address & 0xFF); // Add count and address to checksum
+        for (size_t i = 0; i < chunkSize; i++) {
+            unsigned char dataByte = buffer[index + i];
+            fprintf(outFile, "%02X", dataByte); // Write data in hex
+            checksum += dataByte; // Add data bytes to checksum
         }
+        checksum = ~checksum & 0xFF; // Calculate checksum
+        fprintf(outFile, "%02X\n", checksum); // Write checksum
 
-        // 1's complement (this means flipping all the bytes)
-        checksum = ~checksum & 0xFF;
-
-        // IT writes the checksum to the file
-        fprintf(outFile, "%02X\n", checksum);
-
-
-        fprintf(outFile, "%02X%02X\n", P1, P2);// what this line does is that first it writes formatted output to the outFile file pointer, then it writes the values of P1 and P2
-                                               // how the %02X works is really simple the 0 is so if the number is less than 2 digits then the first number is 0 the 2 is so it reserves 
-                                               // 2 digits for the value and the X prints the value as a hexadecimal number
-
-        index += chunckSize;    // in this part I just move to the next chunk
-        address += 16;          // and here I increment the address by 16 (the value of S1)
-                            
+        index += chunkSize; // Move to next chunk
+        address += chunkSize; // Increment address
     }
+}
 
+/*
+ *  Function  : writeS0Record()
+ *  Summary   : This function writes the S0 header record to the output file.
+ *  Params    :
+ *     FILE* outFile, const char* name
+ *  Return    :
+ *     none.
+ */
+void writeS0Record(FILE* outFile, const char* name) {
+    unsigned char checksum = 0;
+    fprintf(outFile, "S0%02X%04X", (unsigned int)(strlen(name) + 3), 0); // S0 record with name
+    checksum += (strlen(name) + 3) + 0 + 0; // Add count and address to checksum
+    for (size_t i = 0; i < strlen(name); i++) {
+        fprintf(outFile, "%02X", name[i]); // Write name in hex
+        checksum += name[i]; // Add name bytes to checksum
+    }
+    checksum = ~checksum & 0xFF; // Calculate checksum
+    fprintf(outFile, "%02X\n", checksum); // Write checksum
+}
 
+/*
+ *  Function  : writeS5Record()
+ *  Summary   : This function writes the S5 count record to the output file.
+ *  Params    :
+ *     FILE* outFile, int s1Count
+ *  Return    :
+ *     none.
+ */
+void writeS5Record(FILE* outFile, int s1Count) {
+    unsigned char checksum = 3 + (s1Count >> 8) + (s1Count & 0xFF);
+    checksum = ~checksum & 0xFF; // Calculate checksum
+    fprintf(outFile, "S503%04X%02X\n", s1Count, checksum); // Write S5 record
+}
 
+/*
+ *  Function  : writeS9Record()
+ *  Summary   : This function writes the S9 record to the output file.
+ *  Params    :
+ *     FILE* outFile
+ *  Return    :
+ *     none.
+ */
+void writeS9Record(FILE* outFile) {
+    unsigned char checksum = 3 + 0 + 0;
+    checksum = ~checksum & 0xFF; // Calculate checksum
+    fprintf(outFile, "S9030000%02X\n", checksum); // Write S9 record
 }
