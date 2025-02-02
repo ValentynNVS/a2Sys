@@ -1,5 +1,22 @@
+/*
+*   FILE          : cryptoMagic.h
+*   PROJECT       : cryptoMagic - A1
+*   PROGRAMMER    : Valentyn, Juan Jose, Lukas, Warren
+*   FIRST VERSION : 01/31/2025
+*   DESCRIPTION   :
+*      This is the file where all the functionality for SRecord files is implemented.
+*/
+
 #include "encodeInput.h"
 
+/*
+ *  Function  : writeSRecord()
+ *  Summary   : This function writes an S-Record formatted line from binary input file.
+ *  Params    :
+ *     FILE *outFile, unsigned char *buffer, size_t length
+ *  Return    :
+ *     none.
+ */
 void writeSRecord(FILE *outFile, unsigned char *buffer, size_t length) {
     
     size_t address = 0; // this would be a placeholder for the address

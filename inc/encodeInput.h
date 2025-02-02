@@ -1,3 +1,13 @@
+/*
+*   FILE          : cryptoMagic.h
+*   PROJECT       : cryptoMagic - A1
+*   PROGRAMMER    : Valentyn, Juan Jose, Warren
+*   FIRST VERSION : 01/31/2025
+*   DESCRIPTION   :
+*      This is the header file where we put all the function prototypes, libraries
+*      variable declaration, etc
+*/
+
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>

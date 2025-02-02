@@ -1,21 +1,8 @@
-/*
-*   FILE          : cryptoMagic.h
-*   PROJECT       : cryptoMagic - A1
-*   PROGRAMMER    : Valentyn, Juan Jose, Warren
-*   FIRST VERSION : 01/31/2025
-*   DESCRIPTION   :
-*      This is the file where all the functionality for Assembly files is implemented.
-*/
-
 #include "encodeInput.h"
 
 /*
  *  Function  : writeAssembly()
  *  Summary   : Converts binary data into Assembly format and writes to file.
- *  Params    : 
- *     FILE *outFile, unsigned char *buffer, size_t length
- *  Return    :  
- *     none.
  */
 void writeAssembly(FILE *outFile, unsigned char *buffer, size_t length) {
     // TODO: Implement conversion logic

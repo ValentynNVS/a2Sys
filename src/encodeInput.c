@@ -77,6 +77,10 @@ int main(int argc, char* argv[]) {
 /*
  *  Function  : parseArguments()
  *  Summary   : Parses command-line arguments and assigns values accordingly.
+  *  Params    : 
+ *     int argc, char* argv[], char** inputFile, char** outputFile, char** format
+ *  Return    :  
+ *     integer.
  */
 int parseArguments(int argc, char* argv[], char** inputFile, char** outputFile, char** format) {
     *outputFile = "output.txt";  // Default output file
@@ -105,6 +109,14 @@ int parseArguments(int argc, char* argv[], char** inputFile, char** outputFile, 
     return 0;
 }
 
+/*
+ *  Function  : processFile()
+ *  Summary   : This function reads binary file and writes either an S-Record or Assembly output
+ *  Params    :
+ *     int argc, char* argv[], char** inputFile, char** outputFile, char** format
+ *  Return    :
+ *     none.
+ */
 void processFile(FILE *inFile, FILE *outFile, const char *format) {
     unsigned char buffer[16];  // Buffer to hold bytes we're reading from the input file
     size_t bytesRead;  // Keep track of how much data we’ve read
