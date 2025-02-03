@@ -36,7 +36,7 @@ int main(int argc, char* argv[]) {
         }
     }
 
-    FILE* outFile = stdout;
+    FILE* outFile = stdout;    
     if (outputFile != NULL) {
         outFile = fopen(outputFile, "w");
         if (!outFile) {
@@ -46,8 +46,7 @@ int main(int argc, char* argv[]) {
         }
     }
 
-    // now this is the part for you guys, it should be 
-    // implemented ideally in the other file, try to make our code modular
+    
     processFile(inFile, outFile, format);
 
 
@@ -61,6 +60,9 @@ int main(int argc, char* argv[]) {
     if (fclose(outFile) != 0) {
         printf("Error: Could not close output file '%s'\n", outputFile);
         return 1;
+    }
+    if (outputFile != NULL) {
+        free(outputFile);
     }
     return 0;
 }
@@ -76,8 +78,7 @@ int main(int argc, char* argv[]) {
  *     integer.
  */
 int parseArguments(int argc, char* argv[], char** inputFile, char** outputFile, char** format) {
-    *outputFile = "output.txt";  // Default output file
-    *format = "SREC";  // Default format
+    
 
     for (int i = 1; i < argc; i++) {
         if (strncmp(argv[i], "-i", 2) == 0) {
@@ -103,8 +104,9 @@ int parseArguments(int argc, char* argv[], char** inputFile, char** outputFile, 
         }
     }
 
-    if (*inputFile != NULL && *outputFile == NULL) {
-        *outputFile = malloc(strlen(*inputFile) + 5);
+    // If no output file is specified and an input file is specified, create a default output filename
+    if (*outputFile == NULL && *inputFile != NULL) {
+        *outputFile = malloc(strlen(*inputFile) + 6); // Allocate space for input filename + ".asm" or ".srec"
         strcpy(*outputFile, *inputFile);
         if (strcmp(*format, "SREC") == 0) {
             strcat(*outputFile, ".srec");
@@ -113,7 +115,7 @@ int parseArguments(int argc, char* argv[], char** inputFile, char** outputFile, 
             strcat(*outputFile, ".asm");
         }
     }
-
+    
     return 0;
 }
 
