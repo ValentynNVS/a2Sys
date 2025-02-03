@@ -1,6 +1,6 @@
 /*
-*   FILE          : cryptoMagic.h
-*   PROJECT       : cryptoMagic - A1
+*   FILE          : encodeInput.h
+*   PROJECT       : encodeInput - A2
 *   PROGRAMMER    : Valentyn, Juan Jose, Warren
 *   FIRST VERSION : 01/31/2025
 *   DESCRIPTION   :
